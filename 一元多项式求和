@@ -1,0 +1,165 @@
+#include <iostream>
+#include <ctime>
+#include <stdlib.h>
+
+using namespace std;
+
+const int Maxsize =100;
+
+struct jiedian
+{
+	int coef;
+	int exp;
+	jiedian *next;
+};
+
+class Linklist
+{
+	public:
+		Linklist(int a[],int b[],int n);
+		void Printlist();
+		void friend Add(Linklist &A,Linklist &B);
+	private:
+		jiedian *first;
+		int size;
+	
+		
+};
+
+Linklist::Linklist(int a[],int b[],int n)
+{
+	int i;
+	jiedian *s=NULL,*p=NULL;
+	first=new jiedian;
+	p=first;
+	for (i=0;i<n;i++)
+	{
+		s=new jiedian;
+		s->coef=a[i];
+		s->exp=b[i];
+		p->next=s;
+		p=s;
+	}
+	p->next=NULL;
+}
+//尾插法建立单链表 
+
+void Linklist::Printlist()
+{
+	jiedian *p=first->next;
+	while(p->next!=NULL)
+	{
+	
+		cout<<"("<<p->coef<<")"<<"x^("<<p->exp<<")"<<"+";
+		p=p->next;	
+	}
+	cout<<"("<<p->coef<<")"<<"x^("<<p->exp<<")";
+	cout<<endl;
+	
+}
+
+
+void Add(Linklist &A,Linklist &B)
+{
+	jiedian *p,*q,*v,*pre,*qre;
+	pre=A.first;p=pre->next;
+	qre=B.first;q=qre->next;
+	while(p!=NULL&&q!=NULL)
+	{
+		if(p->exp < q->exp)
+		{
+			pre = p;
+			p = p->next;
+			
+			}
+		else if (p->exp > q->exp)	
+			{
+				v=q->next;
+				pre->next=q;
+				q->next=p;
+				pre=q;
+				qre->next=q;
+				q=v;
+				
+			}
+		else {
+				p->coef=p->coef+q->coef;
+				if(p->coef==0)
+					{
+						pre->next=p->next;
+						delete p;
+						p=pre->next;
+					
+				 	} 
+				else
+				 {
+				 	pre=p;
+				 	p=p->next;
+				 	
+				 	}
+				 qre->next=q->next;
+				 delete q;
+				 q=qre->next;
+				 
+				}
+	} 
+	 if (q!=NULL)
+	 {
+	 	pre->next=q;
+	 }
+	 delete B.first;
+	 
+}
+
+
+
+void randarraycoef(int a[],int n)
+{
+	int i;
+	srand(time(NULL));
+	for(i=0;i<n;i++)
+	{
+	  
+	a[i]=rand()%20-9;
+		}
+}
+
+
+void arrayexp(int b[],int n)
+{
+	int i;
+	for (i=0;i<n;i++)
+	{
+		cin>>b[i];
+	 
+	}
+}
+
+int main()
+{
+	int a[Maxsize],b[Maxsize],n,m;
+	cout<<"输入第一个一元多项式的项数："<<endl;	
+	cin>>n;
+	randarraycoef(a,n);
+	cout<<"输入第一个一元多项式的各项指数："<<endl;
+    arrayexp(b,n);
+	Linklist A(a,b,n);
+	A.Printlist();
+
+	cout<<"输入第二个一元多项式的项数："<<endl;
+	cin>>m;
+	randarraycoef(a,m);
+	cout<<"输入第二个一元多项式的各项指数："<<endl;
+	arrayexp(b,m);
+	Linklist B(a,b,m);
+	B.Printlist();
+	
+	Add(A,B);
+	cout<<"两个多项式相加为"<<endl;
+	cout<<endl;
+
+	A.Printlist();
+	
+	
+}
+	
